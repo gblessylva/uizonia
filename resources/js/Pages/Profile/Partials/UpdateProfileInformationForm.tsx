@@ -21,6 +21,7 @@ export default function UpdateProfileInformation({
         useForm({
             name: user.name,
             email: user.email,
+            role: user.role,
         });
 
     const submit: FormEventHandler = (e) => {
@@ -53,6 +54,22 @@ export default function UpdateProfileInformation({
                         required
                         isFocused
                         autoComplete="name"
+                    />
+
+                    <InputError className="mt-2" message={errors.name} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="role" value="Role" />
+
+                    <TextInput
+                        id="rile"
+                        className="mt-1 block w-full"
+                        value={data.role}
+                        onChange={(e) => setData('name', e.target.value)}
+                        required
+                        isFocused
+                        autoComplete="role"
                     />
 
                     <InputError className="mt-2" message={errors.name} />
