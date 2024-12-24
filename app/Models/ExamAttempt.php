@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Admin\Exam;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,7 @@ class ExamAttempt extends Model {
 		'started_at',
 		'completed_at',
 		'score',
+        'scores',
 	);
 
 	// Relationships

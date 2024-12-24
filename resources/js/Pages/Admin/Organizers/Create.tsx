@@ -10,7 +10,7 @@ export default function OrganizerCreate() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post('/organizers');
+        post('/dashboard/admin/organizers');
     };
 
     return (

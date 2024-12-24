@@ -44,7 +44,7 @@ export default function CreateQuestion() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log(data);
-        post('/question');
+        post('/dashboard/admin/question');
     };
 
     const handleOptionsChange = (updatedOptions: string[]) => {

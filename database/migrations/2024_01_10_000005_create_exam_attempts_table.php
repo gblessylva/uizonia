@@ -13,9 +13,10 @@ return new class() extends Migration
 				$table->id();
 				$table->foreignId( 'user_id' )->constrained()->onDelete( 'cascade' );
 				$table->foreignId( 'exam_id' )->constrained()->onDelete( 'cascade' );
-				$table->timestamp( 'started_at' );
+				$table->timestamp( 'started_at' )->nullable();
 				$table->timestamp( 'completed_at' )->nullable();
 				$table->integer( 'score' )->nullable();
+				$table->integer( 'scores' )->nullable();
 				$table->timestamps();
 			}
 		);

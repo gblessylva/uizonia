@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\BreadcrumbService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -14,6 +15,11 @@ class HandleInertiaRequests extends Middleware {
 	 * @var string
 	 */
 	protected $rootView = 'app';
+	protected BreadcrumbService $breadcrumbService;
+
+	public function __construct( BreadcrumbService $breadcrumbService ) {
+		$this->breadcrumbService = $breadcrumbService;
+	}
 
 	/**
 	 * Determine the current asset version.
@@ -30,13 +36,14 @@ class HandleInertiaRequests extends Middleware {
 	public function share( Request $request ): array {
 		return array(
 			...parent::share( $request ),
-			'auth'  => array(
+			'auth'       => array(
 				'user' => $request->user(),
 			),
-			'flash' => array(
+			'flash'      => array(
 				'message' => fn () => $request->session()->get( 'message' ),
 			),
-			'ziggy' => fn () => array(
+			'breadcrumb' => $this->breadcrumbService->generate( $request ),
+			'ziggy'      => fn () => array(
 				...( new Ziggy() )->toArray(),
 				'location' => $request->url(),
 			),

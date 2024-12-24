@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserExamController;
 use App\Http\Controllers\User\UserQuestionController;
+use App\Http\Controllers\User\UserStatisticsController;
 use App\Http\Middleware\CheckUserRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -38,12 +39,12 @@ Route::middleware( array( 'auth', CheckUserRole::class . ':admin' ) )->group(
 
 Route::middleware( array( 'auth', CheckUserRole::class . ':user' ) )->group(
 	function () {
-		Route::get(
-			'/dashboard',
-			function () {
-				return Inertia::render( 'Dashboard' );
-			}
-		)->name( 'dashboard' );
+		Route::get( '/dashboard', array( UserStatisticsController::class, 'index' ) )->name( 'dashboard' );
+			// '/dashboard',
+			// function () {
+			// return Inertia::render( 'Dashboard' );
+			// }
+		// )->name( 'dashboard' );
 	}
 );
 
@@ -84,7 +85,7 @@ Route::middleware( array( 'auth', CheckUserRole::class . ':admin' ) )->prefix( '
 		// Questions
 		Route::get( '/questions', array( QuestionController::class, 'index' ) )->name( 'questions.index' );
 		Route::get( '/question/create', array( QuestionController::class, 'create' ) )->name( 'questions.create' );
-		Route::post( '/questions', array( QuestionController::class, 'store' ) )->name( 'questions.store' );
+		Route::post( '/question', array( QuestionController::class, 'store' ) )->name( 'questions.store' );
 		Route::get( '/questions/{id}/edit', array( QuestionController::class, 'edit' ) )->name( 'questions.edit' );
 		Route::put( '/questions/{id}', array( QuestionController::class, 'update' ) )->name( 'questions.update' );
 		Route::delete( '/questions/{id}', array( QuestionController::class, 'destroy' ) )->name( 'questions.destroy' );
@@ -114,6 +115,6 @@ Route::post( 'dashboard/exams/enroll', array( UserExamController::class, 'enroll
 Route::post( '/api/v1/exam/score', array( UserQuestionController::class, 'saveScore' ) )
 	->name( 'exam.saveScore' )
 	->middleware( 'auth' );
-
+	Route::get( '/api/v1/user-statistics', array( UserStatisticsController::class, 'index' ) )->name( 'user.statistics' );
 // Authentication Routes
 require __DIR__ . '/auth.php';

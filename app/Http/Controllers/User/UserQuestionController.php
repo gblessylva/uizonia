@@ -7,6 +7,8 @@ use App\Models\Admin\Exam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Models\ExamAttempt;
+use Illuminate\Support\Facades\Redirect;
 
 class UserQuestionController extends Controller {
 
@@ -17,6 +19,15 @@ class UserQuestionController extends Controller {
 	 * @return \Inertia\Response
 	 */
 	public function index( $examId ) {
+		// $user = Auth::user();
+
+		// // Check if the examId exists in the user's exam_ids column
+		// // Assuming exam_ids is a comma-separated string
+		// $examIds = explode( ',', $user->exam_ids ); // Split the string into an array
+
+		// if ( ! in_array( $examId, $examIds ) ) {
+		// 	return Redirect::route( 'exams.show', array( 'id' => $examId ) )->with( 'message', 'You do not have access to this exam.' );
+		// }
 		// Fetch the exam with questions
 		$exam = Exam::with( array( 'questions' ) )
 					->findOrFail( $examId );
@@ -47,51 +58,6 @@ class UserQuestionController extends Controller {
 		);
 	}
 
-	// public function saveScore( Request $request ) {
-	// Validate the incoming request
-	// $request->validate(
-	// array(
-	// 'exam_id'    => 'required|integer|exists:exams,id',
-	// 'user_score' => 'required|integer|min:0',
-	// 'max_score'  => 'required|integer|min:0',
-	// )
-	// );
-
-	// Get the authenticated user
-	// $user = Auth::user();
-
-	// Check if an attempt already exists for this user and exam
-	// $existingAttempt = \App\Models\ExamAttempt::where( 'user_id', $user->id )
-	// ->where( 'exam_id', $request->exam_id )
-	// ->first();
-
-	// if ( $existingAttempt ) {
-	// return response()->json(
-	// array(
-	// 'message' => 'You have already completed this exam.',
-	// ),
-	// 200
-	// );
-	// }
-
-	// Create a new exam attempt
-	// $examAttempt = \App\Models\ExamAttempt::create(
-	// array(
-	// 'user_id'      => $user->id,
-	// 'exam_id'      => $request->exam_id,
-	// 'started_at'   => now(), // Assume the exam started now for simplicity
-	// 'completed_at' => now(), // Save the current timestamp for completion
-	// 'score'        => $request->user_score,
-	// )
-	// );
-
-	// return response()->json(
-	// array(
-	// 'message' => 'Score saved successfully.',
-	// 'attempt' => $examAttempt,
-	// )
-	// );
-	// }
 
 	public function saveScore( Request $request ) {
 		// Validate the incoming request
@@ -100,6 +66,7 @@ class UserQuestionController extends Controller {
 				'exam_id'    => 'required|integer|exists:exams,id',
 				'user_score' => 'required|integer|min:0',
 				'max_score'  => 'required|integer|min:0',
+				'started_at' => 'required|string',
 				'scores'     => 'required|array', // JSON for individual question scores
 			)
 		);
@@ -108,16 +75,14 @@ class UserQuestionController extends Controller {
 		$user = Auth::user();
 
 		// Either update an existing attempt or create a new one
-		$examAttempt = \App\Models\ExamAttempt::updateOrCreate(
+		ExamAttempt::updateOrCreate(
 			array(
-				'user_id' => $user->id,
-				'exam_id' => $request->exam_id,
-			),
-			array(
-				'started_at'   => now(), // Assume the exam started now for simplicity
-				'completed_at' => now(), // Save the current timestamp for completion
+				'user_id'      => $user->id,
+				'exam_id'      => $request->exam_id,
+				'started_at'   => date( 'Y-m-d H:i:s', strtotime( $request->started_at ) ),
+				'completed_at' => now(),
 				'score'        => $request->user_score, // Total score
-				'scores'       => $request->scores,    // JSON object for individual question scores
+				'scores'       => json_encode( $request->scores ),    // JSON object for individual question scores
 			)
 		);
 

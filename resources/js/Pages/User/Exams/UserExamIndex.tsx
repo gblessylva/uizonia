@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import UserDashboardLayout from '@/Layouts/UserDashboardLayout';
 
 
 interface Exam {
@@ -24,7 +25,6 @@ export default function UserExamIndex({ exams, enrolledExamIds }: ExamIndexProps
 
     const user = usePage().props.auth.user;
     const { flash } = usePage().props
-    //   const [showModal, setShowModal] = useState<boolean>(!!flash.success);
 
 
     // Handle enroll exam
@@ -39,8 +39,10 @@ export default function UserExamIndex({ exams, enrolledExamIds }: ExamIndexProps
     };
 
     return (
-        <AuthenticatedLayout>
-            <div className="min-h-screen bg-gray-100 p-6">
+        <AuthenticatedLayout>   
+            <div className="bg-gray-100 min-h-screen p-10">
+            <UserDashboardLayout> 
+                <div className="min-h-screen bg-gray-100 p-10">
                 <h1 className="text-3xl font-bold text-gray-800 mb-6">Available Exams</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -75,8 +77,12 @@ export default function UserExamIndex({ exams, enrolledExamIds }: ExamIndexProps
                         </div>
                     ))}
                 </div>
+                </div>
+            </UserDashboardLayout>
             </div>
-        </AuthenticatedLayout>
+            </AuthenticatedLayout>  
+        
+
     );
 };
 

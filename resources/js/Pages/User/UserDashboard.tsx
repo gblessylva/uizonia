@@ -1,42 +1,48 @@
-// Exam Year and Subjects CRUD Implementation
 
-// React Typescript Component for Online Exam UserDashboard
 import React from 'react';
 import { BookOpenIcon, CalendarIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { usePage } from '@inertiajs/react';
+import ExamCard  from '@/Components/User/ExamCard';
+import UserDashboardLayout from '@/Layouts/UserDashboardLayout';
 
-interface ExamCardProps {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    background: string;
-    url: string;
+
+interface Subject {
+    id: number;
+    name: string;
 }
 
-const ExamCard: React.FC<ExamCardProps> = ({ title, description, icon, background, url }) => {
-    return (
-        <a href={url} className={`rounded-lg p-6 flex items-top shadow-md text-gray-200 ${background}`}>
-           
-            <div>
-                <h3 className="text-2xl font-semibold mb-1">{title}</h3>
-                <p className="text-sm opacity-90">{description}</p>
-            </div> 
-            {/* <div className="text-4xl mr-4">
-                {icon}
-            </div> */}
-        </a>
-    );
-};
+interface Exam {
+    exam_id: number;
+    exam_title: string;
+    subject: string;
+    score: number;
+    attempts: number;
+    max_score: number;
+}
 
-const UserDashboard: React.FC = () => {
-    const user = usePage().props.auth.user;
+interface UserStatisticsProps {
+    statistics: {
+        subjects: Subject[];
+        total_exams_enrolled: number;
+        total_score: number;
+        exams: Exam[];
+    };
+}
+
+const UserDashboard: React.FC<UserStatisticsProps> = ({ }) => {
+    const { statistics, breadcrumb } = usePage().props;
+    console.log(breadcrumb);
+
     const examCards = [
         {
             title: 'Enroll in an Exam',
-            description: 'Select an exam to enroll now',
+            description: 'Number of exams you have enrolled and Attempts',
             icon: <CalendarIcon className="h-10 w-10" />,
             background: 'bg-gradient-to-r from-[#B54D20] to-[#DDAA5E]',
-            url: 'dashboard/exams'
+            url: 'dashboard/exams',
+            stats: `${statistics.user_exam_count} / ${statistics.total_exams_enrolled}`,
+
+
         },
         {
             title: 'Subjects Overview',
@@ -50,24 +56,17 @@ const UserDashboard: React.FC = () => {
             description: 'View your previous exam results and scores',
             icon: <CheckCircleIcon className="h-10 w-10" />,
             background: 'bg-gradient-to-r from-[#83A6B2] to-[#9BA4BB]',
-             url: 'dashboard/my-results'
+            url: 'dashboard/my-results',
+            stats: `${statistics.total_score} / ${statistics.total_max}`,
 
         },
     ];
+    // const items = []
 
     return (
         <div className="bg-gray-100 min-h-screen p-10">
-            <header className="mb-6 flex justify-between items-center px-10">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Hello</h1>
-                    <h1 className="text-3xl font-bold text-black-800">{user.name}</h1>
-                    <p className="text-gray-600 mt-1">What would you like to do today?</p>
-                </div>
-                <div>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Enroll Now</button>
-                </div>
-            </header>
-            <section className='flex p-10'>
+            <UserDashboardLayout>
+                <section className='flex p-10'>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {examCards.map((card, index) => (
                         <ExamCard
@@ -77,6 +76,7 @@ const UserDashboard: React.FC = () => {
                             icon={card.icon}
                             background={card.background}
                             url={card.url}
+                            stats={card.stats}
                         />
                     ))}
                 </div>
@@ -90,6 +90,7 @@ const UserDashboard: React.FC = () => {
                     </ul>
                 </aside>
             </section>
+            </UserDashboardLayout>
         </div>
     );
 };

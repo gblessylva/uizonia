@@ -1,6 +1,7 @@
 import { Config } from 'ziggy-js';
 
 export interface User {
+    exam_ids: any;
     id: number;
     name: string;
     email: string;
