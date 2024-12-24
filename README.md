@@ -2,6 +2,7 @@
 
 ## Overview
 Uizonia is a app that is intended to help students writing WAEC, NECO, JAMB to practice using past questions
+<img width="1440" alt="Screenshot 2024-12-24 at 11 14 37 AM" src="https://github.com/user-attachments/assets/8b778875-b500-406f-a975-f380aaa45eaf" />
 
 ---
 
