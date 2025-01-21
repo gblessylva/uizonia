@@ -12,7 +12,8 @@ const UserDashboardLayout: React.FC<UserDashboardLayoutProps> = ({ children }) =
             <div className="bg-gray-100 min-h-screen p-10">
                 <Breadcrumb items={breadcrumb}>
             </Breadcrumb>
-                <header className="mb-10 flex justify-between items-center px-10">
+                <header 
+                    className="mb-10 flex w-full text-left flex-col md:flex-row  justify-between items-left md:items-center px-2 md:px-10 h-[150px] md:h-full">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-800">Hello</h1>
                         <h1 className="text-3xl font-bold text-black-800">{auth.user.name}</h1>
