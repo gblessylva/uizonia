@@ -7,10 +7,14 @@ use App\Http\Controllers\Admin\OrganizerController;
 use App\Http\Controllers\Admin\QuestionController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ImageController;
 use App\Http\Controllers\User\UserExamController;
 use App\Http\Controllers\User\UserQuestionController;
 use App\Http\Controllers\User\UserStatisticsController;
 use App\Http\Middleware\CheckUserRole;
+
+use App\Http\Controllers\User\UserActivityController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -110,6 +114,17 @@ Route::middleware( array( 'auth' ) )->group(
 	}
 );
 
+
+// API Routes (Accessible to All Authenticated Users).
+
+Route::middleware( array( 'auth' ) )->group(
+	function () {
+		Route::get( '/api/v1/activities/recent', array( UserActivityController::class, 'recent' ) )->name( 'recent' );
+		Route::post( '/api/v1/activities/enroll', array( UserActivityController::class, 'enroll' ) );
+	}
+);
+
+
 Route::get( '/api/v1/exams', array( ExamController::class, 'api' ) )->name( 'exam.api' );
 Route::post( 'dashboard/exams/enroll', array( UserExamController::class, 'enroll' ) )->name( 'exams.enroll' );
 Route::post( '/api/v1/exam/score', array( UserQuestionController::class, 'saveScore' ) )
@@ -117,4 +132,7 @@ Route::post( '/api/v1/exam/score', array( UserQuestionController::class, 'saveSc
 	->middleware( 'auth' );
 	Route::get( '/api/v1/user-statistics', array( UserStatisticsController::class, 'index' ) )->name( 'user.statistics' );
 // Authentication Routes
+
+Route::get( '/images', array( ImageController::class, 'index' ) )->name( 'images.index' );
+Route::post( '/images', array( ImageController::class, 'store' ) )->name( 'images.store' );
 require __DIR__ . '/auth.php';

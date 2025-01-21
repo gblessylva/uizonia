@@ -22,7 +22,8 @@ export default function FeaturesSection() {
                     data-aos="zoom-in"
                     data-aos-easing="linear"
                     data-aos-duration="3000"
-                    src="assets/images/device-feature.png" />
+                    width={700}
+                    src="assets/images/feature.png" />
             </div>
             {/* Rotating image Backround */}
             <div className="absolute -left-20 w-1/2 animate-my_move">
@@ -51,7 +52,7 @@ export default function FeaturesSection() {
                     data-aos-duration="1500"
                     className="text-lg mb-12 px-16">
                     Level up your learning game with a platform that’s built to understand you. Say goodbye to boring study routines and hello to smarter, faster, and more fun ways to ace your exams. Here’s why we’re the perfect choice:
-                </p>
+                </p> 
 
                 {/* Features Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

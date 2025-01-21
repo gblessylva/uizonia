@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useForm, usePage } from '@inertiajs/react'; // Ensure this is imported correctly
+import { router, useForm, usePage } from '@inertiajs/react';
 import QuestionComponent from '@/Components/User/QuestionComponent';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import UserDashboardLayout from '@/Layouts/UserDashboardLayout';
+import useFlashMessage from '@/Hooks/useFlashMessage';
+import Flash from '@/Components/Flash';
+import SuccessComponent from '@/Components/User/Success';
+import useActivityLogger from '@/Hooks/useActivityLogger';
+
+
+
 
 interface Exam {
     id: number;
@@ -39,11 +46,16 @@ export default function QuestionsDetailPage({ exam }: PageProps) {
     const { auth } = usePage().props as { auth: { user: User } };
     const userHasAccess = auth.user.exam_ids.includes(exam.id);
     const hasQuestions = questions.length > 0;
-
-    console.log('my user', hasQuestions);
     // Calculate total score and max score dynamically based on userScores and questions
     const totalScore = Object.values(userScores).reduce((acc, score) => acc + score, 0);
     const maxScore = questions.reduce((acc, question) => acc + question.score, 0);
+
+    const { visible, message, type, handleShowFlash } = useFlashMessage();
+    const { logActivity } = useActivityLogger();
+
+    let queryParams = new URLSearchParams(window.location.search)
+    const isCompleted = queryParams.get('completed') === '1';
+
 
     // Use Inertia's useForm hook to manage form state
     const { post, data, setData } = useForm({
@@ -92,28 +104,28 @@ export default function QuestionsDetailPage({ exam }: PageProps) {
 
     // Handle form submission
     const handleSubmit = () => {
-        // const totalScore = Object.values(userScores).reduce((acc, score) => acc + score, 0);
         const now = new Date().toISOString();
-        // setData('completed_at', now); // Ensure completed_at is set
-
-        // setData('completed_at', now);
         setData((prevData) => ({
             ...prevData,
             completed_at: now, // Set the completed_at timestamp
         }));
 
         setTimeout(() => {
-            console.log('Form data being submitted:', data); // Log the form data before submitting
-
-            // Post the form data using Inertia
             post(route('exam.saveScore'), {
                 onSuccess: () => {
-                    console.log('Exam score submitted successfully!');
-                    alert('Score submitted successfully!');
+                    const description = `You Completed ${exam.title} with a score of ${totalScore} out of ${maxScore}`
+                    logActivity(exam.id, 'completed_exam', description);
+                    handleShowFlash('Exam Completed!', 'success');
+                    setTimeout(() => {
+                        localStorage.removeItem('userSCores');
+                        localStorage.setItem('userScores', JSON.stringify(userScores));
+                        window.location.href = route('exams.questions', { id: exam.id, completed: true });
+
+                    }
+                        , 3000);
                 },
                 onError: (errors) => {
-                    console.error(errors);
-                    alert('There was an issue saving your score. Please try again.');
+                    handleShowFlash(`Failed to submit exam. Please try again.${errors}`, 'error');
                 },
             });
 
@@ -123,38 +135,52 @@ export default function QuestionsDetailPage({ exam }: PageProps) {
 
     return (
         <AuthenticatedLayout>
+            {/* Flash Message */}
+            <Flash visible={visible} message={message} type={type} />
             {userHasAccess ? (
                 hasQuestions ? (
                     <div className="min-h-screen bg-gray-100 p-6">
-                        <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
-                            <h1 className="text-3xl font-bold text-gray-800 mb-4">{exam.title}</h1>
-                            <p className="text-gray-600 mb-4"><strong>Number of Questions:</strong> {exam.questions_count}</p>
-
-                            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Questions</h2>
-                            <QuestionComponent
-                                updateUserScores={updateUserScores}
-                                questions={questions}
-                                onSubmit={handleSubmit} // Pass handleSubmit to child
+                        {isCompleted ? (
+                            <SuccessComponent
+                                score={{
+                                    totalQuestions: exam.questions_count,
+                                    // totalScore : totalScore,
+                                    maxScore: maxScore,
+                                }}
                             />
-                        </div>
-                    </div>) : (
+                        ) : (
+                            <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                                <h1 className="text-3xl font-bold text-gray-800 mb-4">{exam.title}</h1>
+                                <p className="text-gray-600 mb-4">
+                                    <strong>Number of Questions:</strong> {exam.questions_count}
+                                </p>
+
+                                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Questions</h2>
+                                <QuestionComponent
+                                    updateUserScores={updateUserScores}
+                                    questions={questions}
+                                    onSubmit={handleSubmit} // Pass handleSubmit to child
+                                />
+                            </div>
+                        )}
+                    </div>
+                ) : (
                     <div className="min-h-screen bg-gray-200 p-6">
                         <div className="text-center text-red-600 mt-8">
                             <h3 className="text-xl font-semibold">No Questions Available</h3>
-                            <p className='mb-8'>Oops, no questions yet for this exam .</p>
+                            <p className="mb-8">Oops, no questions yet for this exam.</p>
                         </div>
                     </div>
                 )
-
             ) : (
                 <div className="min-h-screen bg-gray-200 p-6">
                     <div className="text-center text-red-600 mt-8">
                         <h3 className="text-xl font-semibold">Access Denied</h3>
-                        <p className='mb-8'>You do not have access to this exam.</p>
+                        <p className="mb-8">You do not have access to this exam.</p>
                     </div>
                 </div>
             )}
-
         </AuthenticatedLayout>
     );
+
 }

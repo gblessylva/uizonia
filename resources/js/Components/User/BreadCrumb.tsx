@@ -11,7 +11,6 @@ interface BreadcrumbProps {
 }
 
 const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
-    console.log('bread', items);
     if (!items || items.length <= 1) return null;
     return (
         <nav aria-label="breadcrumb" className="-mt-16 px-10 mb-16  breadcrumb">
