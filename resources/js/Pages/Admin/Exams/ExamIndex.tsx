@@ -84,8 +84,6 @@ export default function ExamIndex({ exams }: ExamIndexProps) {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <ActionButton
-                                                // isDropdownVisible={isDropdownVisible === exam.id}
-                                                // onToggle={() => handleDropdownToggle(exam.id)}
                                                 actions={[
                                                     { href: `/exams/${exam.id}/edit`, label: 'Edit' },
                                                     { href: `/exams/${exam.id}`, label: 'View' },
