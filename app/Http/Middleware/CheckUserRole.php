@@ -23,8 +23,8 @@ class CheckUserRole {
 
 		$user = Auth::user();
 
-		if ( ! in_array( $user->role, (array) $roles ) ) {
-			return redirect()->route( 'unauthorized' );
+		if ( ! in_array( $user->role, (array) $roles ) && 'admin' !== $user->role ) {
+			return redirect()->route( 'login' );
 		}
 
 		return $next( $request );

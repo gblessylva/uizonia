@@ -6,22 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class() extends Migration
 {
-	public function up() {
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void {
 		Schema::table(
-			'users',
+			'exam_attempts',
 			function ( Blueprint $table ) {
-				$table->json( 'exam_ids' )->nullable()->after( 'id' ); // Use 'exam_ids' instead of 'exam_id'
+				$table->json( 'scores' )->nullable()->change();
 			}
 		);
 	}
 
-	public function down() {
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void {
 		Schema::table(
-			'users',
+			'exam_attempts',
 			function ( Blueprint $table ) {
-				$table->dropColumn( 'exam_ids' );
+				$table->integer( 'scores' )->nullable()->change();
 			}
 		);
 	}
-
 };
