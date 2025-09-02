@@ -97,7 +97,8 @@ Route::middleware( array( 'auth', CheckUserRole::class . ':admin' ) )->prefix( '
 );
 
 // User Routes.
-Route::middleware( array( 'auth', CheckUserRole::class . ':user' ) )->prefix( 'dashboard' )->group(
+// Allow route for both user and admin role
+Route::middleware( array( 'auth', CheckUserRole::class . ':user'  ) )->prefix( 'dashboard' )->group(
 	function () {
 		Route::get( '/exams', array( UserExamController::class, 'index' ) )->name( 'exams.index' );
 		Route::get( '/exams/{id}', array( UserExamController::class, 'show' ) )->name( 'exams.show' );

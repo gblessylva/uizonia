@@ -55,11 +55,11 @@ Uizonia is a app that is intended to help students writing WAEC, NECO, JAMB to p
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/exam-management-app.git
+   git clone https://github.com/gblessylva/uizonia.git
    ```
 2. Navigate to the project directory:
    ```bash
-   cd exam-management-app
+   cd uizonia
    ```
 3. Install PHP dependencies:
    ```bash
